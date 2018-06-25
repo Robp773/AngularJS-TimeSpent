@@ -1,14 +1,63 @@
 <html ng-app="root-app">
 
+
 <head>
-    <link href='home.css' rel='stylesheet' type='text/css'>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link href="home.css" rel="stylesheet" type="text/css" />
 </head>
 
+<body>
 
+    <div id="bannerParent">
+        <h1 id="bannerHeader">Time$pent</h1>
+        <div id="bannerDate">Tuesday January 15th, 2018</div>
+        <div id="bannerClock">2:03 PM</div>
+    </div>
 
-    <script type="text/javascript" src="../bower_components/angular/angular.js"></script>
-    <script src='home.js'></script>
+    <div class="totals">
+
+        <button class="tab recorded">Recorded Minutes</button>
+        <button class="tab toDo">To Do Minutes</button>
+
+        <h3>Summary</h3>
+
+        <h4>Today</h4>
+        <div class="graphParent">
+            <button class="switchGraphBtn"><
+                </button>
+                    <img src="https://qz.com/wp-content/uploads/2018/04/pie-chart_colorcorrected.jpeg?quality=80&strip=all&w=940" />
+                <button class="switchGraphBtn">></button>
+        </div>
+
+        <div class="totalsAndStats">
+            <div>Recorded Minutes - 121</div>
+            <div>Unspent Passed Time - 444</div>
+            <div>Planned Minutes - 3443</div>
+            <div>Time Left - 34534</div>
+        </div>
+
+        <h4>Overall</h4>
+
+        <div class="graphParent">
+            <button class="switchGraphBtn"><
+                </button>
+                    <img src="https://qz.com/wp-content/uploads/2018/04/pie-chart_colorcorrected.jpeg?quality=80&strip=all&w=940" />
+                <button class="switchGraphBtn">></button>
+        </div>
+
+        <div class="totalsAndStats">
+            <div>Recorded Minutes - 121</div>
+            <div>Unspent Passed Time - 444</div>
+            <div>Planned Minutes - 3443</div>
+            <div>Time Left - 34534</div>
+        </div>
+
+    </div>
+
+    <script src="home.js"></script>
 
 </body>
+
 
 </html>

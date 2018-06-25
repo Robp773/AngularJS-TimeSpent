@@ -1,0 +1,57 @@
+html {
+	background: aliceblue;
+}
+#bannerParent {
+	font-size: 20px;
+	background: gainsboro;
+	text-align: center;
+}
+#bannerHeader, #bannerClock, #bannerDate {
+	margin: 3px;
+}
+.totals {
+	height: 100vh;
+	text-align: center;
+}
+h3 {
+	font-size: 33px;
+	text-align: center;
+	margin-top: 0;
+}
+h4 {
+	margin: 5px;
+	font-size: 25px;
+}
+img {
+	display: inline-block;
+	margin: 0 auto;
+	width: 75%;
+	height: 200px;
+}
+.switchGraphBtn {
+	font-size: 25px;
+	height: 200px;
+	vertical-align: top;
+	margin-left: 3px;
+	margin-right: 3px;
+	border: 0;
+}
+.totalsAndStats {
+	padding: 15px;
+	background: gainsboro;
+	margin: 10px auto;
+	font-weight: bold;
+	text-align: center;
+	font-size: 23px;
+}
+.recorded {
+	float: left;
+}
+.toDo {
+	float: right;
+}
+.tab {
+	height: 35px;
+	position: relative;
+	margin: 5px;
+}
