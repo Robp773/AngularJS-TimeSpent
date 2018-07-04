@@ -1,0 +1,26 @@
+<form id="modalForm">
+
+    <legend>{{vm.title}}</legend>
+    <input class="modalInput" type="text" placeholder="Name of {{vm.name}}" />
+    <input class="modalInput" type="text" placeholder="{{vm.verb}} minutes" />
+    <label id="typeLabel">Type:</label>
+    <select>
+        <option>Other</option>
+        <option>One Time</option>
+        <option>Routine</option>
+        <option>Project</option>
+        <option>Problem</option>
+    </select>
+    <div>
+        <label>Productive?</label>
+
+        <label class="switch">
+            <input type="checkbox">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <button type="submit">Submit</button>
+    <button type="reset">Reset</button>
+    <button id="exitBtn" ng-click="vm.recordActive = false; vm.plansActive = false">X</button>
+
+</form>

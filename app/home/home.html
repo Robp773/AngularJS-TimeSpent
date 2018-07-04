@@ -4,30 +4,43 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css' rel='stylesheet' type='text/css'>
     <link href="home.css" rel="stylesheet" type="text/css" />
+
 </head>
 
 <body>
 
     <div id="bannerParent">
+
         <h1 id="bannerHeader">Time$pent</h1>
         <div id="bannerDate">Tuesday January 15th, 2018</div>
         <div id="bannerClock">2:03 PM</div>
+
+        <div id="modalParent" ng-controller="ModalCtrl as vm">
+
+            <div class="modalBG" ng-show="vm.recordActive || vm.plansActive">
+                <modal-form/>
+            </div>
+
+            <div>
+                <button ng-click="vm.btnClick('records')" class="tab recorded">Recorded Minutes</button>
+                <button ng-click="vm.btnClick('plans')" class="tab toDo">To Do Minutes</button>
+            </div>
+        </div>
     </div>
 
     <div class="totals">
 
-        <button class="tab recorded">Recorded Minutes</button>
-        <button class="tab toDo">To Do Minutes</button>
-
         <h3>Summary</h3>
 
         <h4>Today</h4>
+
         <div class="graphParent">
-            <button class="switchGraphBtn"><
-                </button>
+            <button class="switchGraphBtn">
+                <</button>
                     <img src="https://qz.com/wp-content/uploads/2018/04/pie-chart_colorcorrected.jpeg?quality=80&strip=all&w=940" />
-                <button class="switchGraphBtn">></button>
+                    <button class="switchGraphBtn">></button>
         </div>
 
         <div class="totalsAndStats">
@@ -40,10 +53,10 @@
         <h4>Overall</h4>
 
         <div class="graphParent">
-            <button class="switchGraphBtn"><
-                </button>
+            <button class="switchGraphBtn">
+                <</button>
                     <img src="https://qz.com/wp-content/uploads/2018/04/pie-chart_colorcorrected.jpeg?quality=80&strip=all&w=940" />
-                <button class="switchGraphBtn">></button>
+                    <button class="switchGraphBtn">></button>
         </div>
 
         <div class="totalsAndStats">
@@ -55,6 +68,7 @@
 
     </div>
 
+    <script src="../bower_components/angular/angular.js"></script>
     <script src="home.js"></script>
 
 </body>
