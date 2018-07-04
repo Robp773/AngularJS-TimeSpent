@@ -18,7 +18,13 @@ angular.module('root-app', [])
         vm.verb = 'Planned';
       }
     };
+    this.modalExit = function () {
+      vm.recordActive = false;
+      vm.plansActive = false;
+      document.getElementById('modalForm').reset();
+    };
   })
+
   .directive('modalForm', function () {
     return {
       restrict: 'E',

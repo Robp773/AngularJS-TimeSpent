@@ -1,4 +1,4 @@
-<form id="modalForm">
+<form name="modalForm" id="modalForm">
 
     <legend>{{vm.title}}</legend>
     <input class="modalInput" type="text" placeholder="Name of {{vm.name}}" />
@@ -21,6 +21,7 @@
     </div>
     <button type="submit">Submit</button>
     <button type="reset">Reset</button>
-    <button id="exitBtn" ng-click="vm.recordActive = false; vm.plansActive = false">X</button>
+
+    <button id="exitBtn" ng-click="vm.modalExit()">X</button>
 
 </form>
