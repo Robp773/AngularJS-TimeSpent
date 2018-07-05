@@ -6,16 +6,16 @@
     <meta name="viewport" content="width=device-width">
     <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css' rel='stylesheet' type='text/css'>
     <link href="home.css" rel="stylesheet" type="text/css" />
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
+        crossorigin="anonymous">
 </head>
 
 <body>
+    <div id="bannerParent" ng-controller="BannerCtrl as vm">
 
-    <div id="bannerParent">
-
-        <h1 id="bannerHeader">Time$pent</h1>
+        <h1 id="bannerHeader">Time $pent</h1>
         <div id="bannerDate">Tuesday January 15th, 2018</div>
-        <div id="bannerClock">2:03 PM</div>
+        <div id="bannerClock">{{timeObj.currentTime}} {{timeObj.timePeriod}}</div>
 
         <div id="modalParent" ng-controller="ModalCtrl as vm">
 
@@ -24,8 +24,12 @@
             </div>
 
             <div>
-                <button ng-click="vm.btnClick('records')" class="tab recorded">Recorded Minutes</button>
-                <button ng-click="vm.btnClick('plans')" class="tab toDo">To Do Minutes</button>
+                <button ng-click="vm.btnClick('records')" class="tab recorded">
+                    <i class="far fa-plus-square"></i>
+                </button>
+                <button ng-click="vm.btnClick('plans')" class="tab toDo">
+                    <i class="fas fa-clipboard-list"></i>
+                </button>
             </div>
         </div>
     </div>
