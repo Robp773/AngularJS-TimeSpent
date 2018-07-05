@@ -14,8 +14,8 @@
     <div id="bannerParent" ng-controller="BannerCtrl as vm">
 
         <h1 id="bannerHeader">Time $pent</h1>
-        <div id="bannerDate">Tuesday January 15th, 2018</div>
-        <div id="bannerClock">{{timeObj.currentTime}} {{timeObj.timePeriod}}</div>
+        <div id="bannerDate">{{vm.date | date:"fullDate"}}</div>
+        <div id="bannerClock">{{vm.date | date:"mediumTime"}}</div>
 
         <div id="modalParent" ng-controller="ModalCtrl as vm">
 

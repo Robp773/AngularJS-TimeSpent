@@ -29,32 +29,11 @@ angular.module('root-app', [])
 
   .controller('BannerCtrl', function ($interval, $rootScope) {
     let vm = this;
-    let timeWait;
-    // vm.time = getTime;
+    vm.date = new Date();
 
     $interval(function () {
-      let date = new Date();
-      let minutes, hours, period;
-      // convert into 12 hour clock
-      if (date.getHours() > 12) {
-        hours = date.getHours() - 12;
-        period = 'PM';
-      }
-      else {
-        hours = date.getHours();
-        period = 'AM';
-      }
-      if (date.getMinutes() < 10) {
-        minutes = `0${date.getMinutes()}`;
-      }
-      else {
-        minutes = date.getMinutes();
-      }
-      let time = `${hours}:${minutes}`;
-      // create variable to count the exact number of seconds until the next minute. 
-      timeWait = (60 - date.getSeconds()) * 1000;
-      $rootScope.timeObj = { currentTime: time, timePeriod: period, timeWait: timeWait };
-    }, timeWait);
+      vm.date = new Date();
+    }, 1000);
   })
 
   .directive('modalForm', function () {
@@ -63,6 +42,7 @@ angular.module('root-app', [])
       templateUrl: 'modalForm.html'
     };
   });
+
 
 
 
