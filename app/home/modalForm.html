@@ -1,8 +1,8 @@
-<form name="modalForm" id="modalForm">
+<form name="modalForm" id="modalForm" ng-submit="vm.formSubmit(vm.verb, vm.minutes)">
 
     <legend>{{vm.title}}</legend>
     <input class="modalInput" type="text" placeholder="Name of {{vm.name}}" />
-    <input class="modalInput" type="text" placeholder="{{vm.verb}} minutes" />
+    <input class="modalInput" type="number" ng-model="vm.minutes" placeholder="{{vm.verb}} minutes" required />
     <label id="typeLabel">Type:</label>
     <select>
         <option>Other</option>
