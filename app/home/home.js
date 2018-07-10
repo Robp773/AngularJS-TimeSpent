@@ -1,58 +1,68 @@
 'use strict';
 
 angular.module('root-app', [])
-  .factory('totals', function () {
-    let totals = {};
+  .factory('dataTotals', function () {
+    let dataTotals = {
+      plannedMins: 0,
+      recordedMins: 0,
+      unspentPastMins: 0,
+      historyTotals: {
+        recordedTotal: 0,
+        plannedTotal: 0,
+        unusedPastTime: 0
+      }
+    };
     let newTime = new Date();
     let passedMins = newTime.getHours() * 60 + newTime.getMinutes();
+    let simGet = 0;
 
-    // MOCK DATA - eventually make GET requests to get initial values
-    // -----------------------
-    totals.plannedMins = 14;
-    totals.recordedMins = 45;
-    totals.unspentPastMins = passedMins - totals.recordedMins;
-    totals.timeLeft = 1440 - passedMins - totals.plannedMins;
-    // -----------------------
+    dataTotals.unspentPastMins = passedMins - dataTotals.recordedMins;
+    dataTotals.timeLeft = 1440 - passedMins - dataTotals.plannedMins;
 
     // update the number of passed minutes 
-    totals.timeTracker = function () {
+    dataTotals.timeTracker = function () {
       let newTime = new Date();
       passedMins = newTime.getHours() * 60 + newTime.getMinutes();
-      totals.unspentPastMins = passedMins - totals.recordedMins;
-      totals.timeLeft = 1440 - passedMins - totals.plannedMins;
+      dataTotals.unspentPastMins = passedMins - dataTotals.recordedMins;
+      dataTotals.historyTotals.unusedPastTime = simGet + dataTotals.unspentPastMins;
+      dataTotals.timeLeft = 1440 - passedMins - dataTotals.plannedMins;
     };
 
-    // POST requests - send POST reqs to update DB and then update local values to reflect changes (totals.passedMins/timeLeft)
-    totals.updateRecorded = function (newMins) {
+    // POST requests - send POST reqs to update DB and then update local values to reflect changes (dataTotals.passedMins/timeLeft)
+    dataTotals.updateRecorded = function (newMins) {
 
       // deletions to record list
       if (newMins < 0) {
-        totals.recordedMins = totals.recordedMins - newMins;
-        totals.unspentPastMins = totals.unspentPastMins + newMins;
+        dataTotals.recordedMins = dataTotals.recordedMins - newMins;
+        dataTotals.unspentPastMins = dataTotals.unspentPastMins + newMins;
+        dataTotals.historyTotals.recordedTotal = dataTotals.historyTotals.recordedTotal - newMins;
       }
       // additions to record list
       else {
-        totals.recordedMins = totals.recordedMins + newMins;
-        totals.unspentPastMins = totals.unspentPastMins - newMins;
+        dataTotals.recordedMins = dataTotals.recordedMins + newMins;
+        dataTotals.unspentPastMins = dataTotals.unspentPastMins - newMins;
+        dataTotals.historyTotals.recordedTotal = dataTotals.historyTotals.recordedTotal + newMins;
       }
     };
 
-    totals.updatePlanned = function (newMins) {
+    dataTotals.updatePlanned = function (newMins) {
 
       // deletions to planned list
       if (newMins < 0) {
-        totals.plannedMins = totals.plannedMins - newMins;
-        totals.timeLeft = totals.timeLeft + newMins;
+        dataTotals.plannedMins = dataTotals.plannedMins - newMins;
+        dataTotals.timeLeft = dataTotals.timeLeft + newMins;
+        dataTotals.historyTotals.plannedTotal = dataTotals.historyTotals.plannedTotal - newMins;
       }
       // additions to planned list
       else {
-        totals.plannedMins = totals.plannedMins + newMins;
-        totals.timeLeft = totals.timeLeft - newMins;
+        dataTotals.plannedMins = dataTotals.plannedMins + newMins;
+        dataTotals.timeLeft = dataTotals.timeLeft - newMins;
+        dataTotals.historyTotals.plannedTotal = dataTotals.historyTotals.plannedTotal + newMins;
       }
     };
-    return totals;
+    return dataTotals;
   })
-  .controller('ModalCtrl', function (totals) {
+  .controller('ModalCtrl', function (dataTotals) {
     let vm = this;
     this.btnClick = function (tab) {
       if (tab === 'records') {
@@ -76,10 +86,10 @@ angular.module('root-app', [])
 
     this.formSubmit = function (title, minutes) {
       if (title === 'Recorded') {
-        totals.updateRecorded(minutes);
+        dataTotals.updateRecorded(minutes);
       }
       else {
-        totals.updatePlanned(minutes);
+        dataTotals.updatePlanned(minutes);
       }
       document.getElementById('modalForm').reset();
     };
@@ -93,17 +103,18 @@ angular.module('root-app', [])
     }, 1000);
   })
 
-  .controller('TotalsCtrl', function ($interval, totals) {
+  .controller('TotalsCtrl', function ($interval, dataTotals) {
     let vm = this;
-    vm.data = totals;
+    vm.data = dataTotals;
+    console.log(vm.data);
 
     // this.test = function (mins) {
-    //   totals.updateRecorded(mins);
-    //   totals.updatePlanned(mins);
+    //   dataTotals.updateRecorded(mins);
+    //   dataTotals.updatePlanned(mins);
     // };
 
     $interval(function () {
-      totals.timeTracker();
+      dataTotals.timeTracker();
     }, 1000);
 
   })
