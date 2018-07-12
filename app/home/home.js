@@ -6,10 +6,23 @@ angular.module('root-app', [])
       plannedMins: 0,
       recordedMins: 0,
       unspentPastMins: 0,
+      productivity: {
+        recorded: {
+          productive: 0,
+          unproductive: 0,
+          percentage: 0
+        },
+        planned: {
+          productive: 0,
+          unproductive: 0,
+          percentage: 0
+        }
+      },
       historyTotals: {
         recordedTotal: 0,
-        plannedTotal: 0,
-        unusedPastTime: 0
+        unusedPastTime: 0,
+        productive: 0,
+        unproductive: 0
       }
     };
     let newTime = new Date();
@@ -19,6 +32,12 @@ angular.module('root-app', [])
     dataTotals.unspentPastMins = passedMins - dataTotals.recordedMins;
     dataTotals.timeLeft = 1440 - passedMins - dataTotals.plannedMins;
 
+    if (dataTotals.productivity.recorded.productive !== 0) {
+      dataTotals.productivity.recorded.percentage = (dataTotals.productivity.recorded.productive / (dataTotals.productivity.recorded.productive + dataTotals.productivity.recorded.unproductive) * 100).toFixed(1);
+    }
+    if (dataTotals.productivity.planned.productive !== 0) {
+      dataTotals.productivity.planned.percentage = (dataTotals.productivity.planned.productive / (dataTotals.productivity.planned.productive + dataTotals.productivity.planned.unproductive) * 100).toFixed(1);
+    }
     // update the number of passed minutes 
     dataTotals.timeTracker = function () {
       let newTime = new Date();
@@ -28,71 +47,50 @@ angular.module('root-app', [])
       dataTotals.timeLeft = 1440 - passedMins - dataTotals.plannedMins;
     };
 
-    // POST requests - send POST reqs to update DB and then update local values to reflect changes (dataTotals.passedMins/timeLeft)
-    dataTotals.updateRecorded = function (newMins) {
+    // POST requests - send POST reqs to update DB and then update local values to reflect changes
+    dataTotals.updateRecorded = function (newMins, productivity) {
 
       // deletions to record list
       if (newMins < 0) {
+        productivity ? dataTotals.productivity.recorded.productive-- : dataTotals.productivity.recorded.unproductive--;
         dataTotals.recordedMins = dataTotals.recordedMins - newMins;
         dataTotals.unspentPastMins = dataTotals.unspentPastMins + newMins;
         dataTotals.historyTotals.recordedTotal = dataTotals.historyTotals.recordedTotal - newMins;
+        // recalculate percentages based off of new values
+        dataTotals.productivity.recorded.percentage = (dataTotals.productivity.recorded.productive / (dataTotals.productivity.recorded.productive + dataTotals.productivity.recorded.unproductive) * 100).toFixed(1);
       }
       // additions to record list
       else {
+        productivity ? dataTotals.productivity.recorded.productive++ : dataTotals.productivity.recorded.unproductive++;
         dataTotals.recordedMins = dataTotals.recordedMins + newMins;
         dataTotals.unspentPastMins = dataTotals.unspentPastMins - newMins;
         dataTotals.historyTotals.recordedTotal = dataTotals.historyTotals.recordedTotal + newMins;
+        // recalculate percentages based off of new values
+        dataTotals.productivity.recorded.percentage = (dataTotals.productivity.recorded.productive / (dataTotals.productivity.recorded.productive + dataTotals.productivity.recorded.unproductive) * 100).toFixed(1);
       }
     };
 
-    dataTotals.updatePlanned = function (newMins) {
+    dataTotals.updatePlanned = function (newMins, productivity) {
 
       // deletions to planned list
       if (newMins < 0) {
+        productivity ? dataTotals.productivity.planned.productive-- : dataTotals.productivity.planned.unproductive--;
         dataTotals.plannedMins = dataTotals.plannedMins - newMins;
         dataTotals.timeLeft = dataTotals.timeLeft + newMins;
-        dataTotals.historyTotals.plannedTotal = dataTotals.historyTotals.plannedTotal - newMins;
+        // recalculate percentages based off of new values
+        dataTotals.productivity.planned.percentage = (dataTotals.productivity.planned.productive / (dataTotals.productivity.planned.productive + dataTotals.productivity.planned.unproductive) * 100).toFixed(1);
+
       }
       // additions to planned list
       else {
+        productivity ? dataTotals.productivity.planned.productive++ : dataTotals.productivity.planned.unproductive++;
         dataTotals.plannedMins = dataTotals.plannedMins + newMins;
         dataTotals.timeLeft = dataTotals.timeLeft - newMins;
-        dataTotals.historyTotals.plannedTotal = dataTotals.historyTotals.plannedTotal + newMins;
+        // recalculate percentages based off of new values
+        dataTotals.productivity.planned.percentage = (dataTotals.productivity.planned.productive / (dataTotals.productivity.planned.productive + dataTotals.productivity.planned.unproductive) * 100).toFixed(1);
       }
     };
     return dataTotals;
-  })
-  .controller('ModalCtrl', function (dataTotals) {
-    let vm = this;
-    this.btnClick = function (tab) {
-      if (tab === 'records') {
-        vm.recordActive = true;
-        vm.title = 'Records';
-        vm.name = 'Record';
-        vm.verb = 'Recorded';
-      }
-      else {
-        vm.plansActive = true;
-        vm.title = 'Plans';
-        vm.name = 'Plan';
-        vm.verb = 'Planned';
-      }
-    };
-    this.modalExit = function () {
-      vm.recordActive = false;
-      vm.plansActive = false;
-      document.getElementById('modalForm').reset();
-    };
-
-    this.formSubmit = function (title, minutes) {
-      if (title === 'Recorded') {
-        dataTotals.updateRecorded(minutes);
-      }
-      else {
-        dataTotals.updatePlanned(minutes);
-      }
-      document.getElementById('modalForm').reset();
-    };
   })
 
   .controller('BannerCtrl', function ($interval) {
@@ -106,12 +104,52 @@ angular.module('root-app', [])
   .controller('TotalsCtrl', function ($interval, dataTotals) {
     let vm = this;
     vm.data = dataTotals;
-    console.log(vm.data);
 
-    // this.test = function (mins) {
-    //   dataTotals.updateRecorded(mins);
-    //   dataTotals.updatePlanned(mins);
-    // };
+    this.btnClick = function (tab) {
+      vm.modalActive = true;
+      if (tab === 'recordsAdd') {
+        vm.formActive = true;
+        vm.title = 'Records';
+        vm.name = 'Record';
+        vm.verb = 'Recorded';
+      }
+      else if (tab === 'plansAdd') {
+        vm.formActive = true;
+        vm.title = 'Plans';
+        vm.name = 'Plan';
+        vm.verb = 'Planned';
+      }
+      else if (tab === 'recordsList') {
+        vm.listActive = true;
+
+        // vm.dataset = data.records
+      }
+      else if (tab === 'plansList') {
+        vm.listActive = true;
+        // vm.dataset = data.records
+      }
+      console.log(vm.formActive)
+
+    };
+    this.modalExit = function () {
+      vm.formActive = false;
+      vm.listActive = false;
+      vm.modalActive = false;
+
+
+      document.getElementById('modalForm').reset();
+    };
+
+    this.formSubmit = function (type, minutes, productivity) {
+      if (type === 'Recorded') {
+        dataTotals.updateRecorded(minutes, productivity);
+      }
+      else {
+        dataTotals.updatePlanned(minutes, productivity);
+      }
+      document.getElementById('modalForm').reset();
+      vm.productivity = false;
+    };
 
     $interval(function () {
       dataTotals.timeTracker();
@@ -123,5 +161,11 @@ angular.module('root-app', [])
     return {
       restrict: 'E',
       templateUrl: 'modalForm.html'
+    };
+  })
+  .directive('modalList', function () {
+    return {
+      restrict: 'E',
+      templateUrl: 'modalList.html'
     };
   });

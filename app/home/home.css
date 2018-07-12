@@ -37,23 +37,10 @@ img {
 	border: 0;
 }
 .totalsAndStats {
-	padding: 15px;
-	background: gainsboro;
-	margin: 10px auto;
-	font-weight: bold;
-	text-align: center;
-	font-size: 23px;
-}
-.recorded {
-	float: left;
-}
-.toDo {
-	float: right;
-}
-.tab {
-	height: 35px;
-	position: relative;
-	margin: 5px;
+    width: 85%;
+    margin: 5px auto;
+    font-weight: bold;
+    font-size: 23px;
 }
 
 .modalBG{
@@ -145,3 +132,46 @@ input{
 	transform: translateX(13px);
   }
 
+  .totalSection{
+	display: flex;
+    justify-content: space-between;
+  }
+
+  .totalLabel, .totalValue{
+	  display: inline-block;
+  }
+
+  .totalLabel{
+	  margin-right: 5px;
+	  margin-left: 10px;
+  }
+  .totalValue{
+	  margin-right: 10px;
+  }
+
+  .subTotal{
+	 background: lightgreen;
+  }
+  .subtraction{
+	  background: lightcoral;
+  }
+
+.plans, .records, .productivity{
+	display: inline-block;
+}
+
+.records, .plans{
+	font-size: 20px;
+	position: relative;
+    padding: 5px;
+    background: gainsboro;
+    margin: 5px;
+}
+
+
+.records{
+	right: 20px;
+}
+.plans{
+	left: 20px;
+}
