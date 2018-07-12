@@ -1,4 +1,4 @@
-<form name="modalForm" id="modalForm" ng-submit="vm.formSubmit(vm.verb, vm.minutes)">
+<form name="modalForm" id="modalForm" ng-submit="vm.formSubmit(vm.verb, vm.minutes, vm.productivity)">
 
     <legend>{{vm.title}}</legend>
     <input class="modalInput" type="text" placeholder="Name of {{vm.name}}" />
@@ -15,13 +15,13 @@
         <label>Productive?</label>
 
         <label class="switch">
-            <input type="checkbox">
+            <input ng-model="vm.productivity" type="checkbox">
             <span class="slider"></span>
         </label>
     </div>
+
     <button type="submit">Submit</button>
     <button type="reset">Reset</button>
-
     <button id="exitBtn" ng-click="vm.modalExit()">X</button>
 
 </form>
