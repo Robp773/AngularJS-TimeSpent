@@ -68,10 +68,16 @@ angular.module('root-app', [])
     };
 
     // POST requests - send POST reqs to update DB and then update local values to reflect changes
-    dataTotals.updateRecorded = function (newMins, productivity) {
+    dataTotals.updateRecorded = function (add, name, newMins, category, productivity) {
 
       // deletions to record list
-      if (newMins < 0) {
+      if (!add) {
+
+        //  let index =  dataTotals.today.records.list.findIndex(function(){
+        //     return {name: name, cost: newMins, category: category, productivity: productivity};
+        //   });
+        //   console.log(index)
+
         productivity ? dataTotals.records.productivity.productive-- : dataTotals.records.productivity.unproductive--;
         dataTotals.today.records.totalMins = dataTotals.today.records.totalMins - newMins;
         dataTotals.today.unspentPastMins = dataTotals.today.unspentPastMins + newMins;
@@ -81,6 +87,7 @@ angular.module('root-app', [])
       }
       // additions to record list
       else {
+        dataTotals.today.records.list.push({name: name, cost: newMins, category: category, productivity: productivity});
         productivity ? dataTotals.today.records.productivity.productive++ : dataTotals.today.records.productivity.unproductive++;
         dataTotals.today.records.totalMins = dataTotals.today.records.totalMins + newMins;
         dataTotals.today.unspentPastMins = dataTotals.today.unspentPastMins - newMins;
@@ -90,10 +97,10 @@ angular.module('root-app', [])
       }
     };
 
-    dataTotals.updatePlanned = function (newMins, productivity) {
+    dataTotals.updatePlanned = function (add, name, newMins, category, productivity) {
 
       // deletions to planned list
-      if (newMins < 0) {
+      if (!add) {
         productivity ? dataTotals.today.plans.productivity.productive-- : dataTotals.today.plans.productivity.unproductive--;
         dataTotals.today.plans.totalMins = dataTotals.today.plans.totalMins - newMins;
         dataTotals.today.timeLeft = dataTotals.today.timeLeft + newMins;
@@ -103,6 +110,7 @@ angular.module('root-app', [])
       }
       // additions to planned list
       else {
+        dataTotals.today.plans.list.push({name: name, cost: newMins, category: category, productivity: productivity});
         productivity ? dataTotals.today.plans.productivity.productive++ : dataTotals.today.plans.productivity.unproductive++;
         dataTotals.today.plans.totalMins = dataTotals.today.plans.totalMins + newMins;
         dataTotals.today.timeLeft = dataTotals.today.timeLeft - newMins;
@@ -155,12 +163,12 @@ angular.module('root-app', [])
     };
 
     this.formSubmit = function (type, name, minutes, category, productivity) {
-      console.log(name, minutes, category, productivity);
       if (type === 'Recorded') {
-        dataTotals.updateRecorded(minutes, productivity);
+        dataTotals.updateRecorded(true, name, minutes, category, productivity);
       }
       else {
-        dataTotals.updatePlanned(minutes, productivity);
+        console.log('plans')
+        dataTotals.updatePlanned(true, name, minutes, category, productivity);
       }
       document.getElementById('modalForm').reset();
       vm.productivity = false;

@@ -1,19 +1,23 @@
-<form name="modalForm" id="modalForm" ng-submit="vm.formSubmit(vm.verb, vm.minutes, vm.productivity)">
+<form name="modalForm"  id="modalForm" ng-submit="vm.formSubmit(vm.verb, vm.name, vm.minutes, vm.category, vm.productivity)">
 
     <legend>{{vm.title}}</legend>
-    <input class="modalInput" type="text" placeholder="Name of {{vm.name}}" />
+
+    <input class="modalInput" type="text" ng-model="vm.name" placeholder="Name of {{vm.name}}" required/>
+
     <input class="modalInput" type="number" ng-model="vm.minutes" placeholder="{{vm.verb}} minutes" required />
-    <label id="typeLabel">Type:</label>
-    <select>
-        <option>Other</option>
+
+    <label id="categoryLabel">Category:</label>
+    <select ng-model="vm.category">
+        <option value="" selected>Select</option>
         <option>One Time</option>
         <option>Routine</option>
         <option>Project</option>
         <option>Problem</option>
+        <option>Other</option>
     </select>
+
     <div>
         <label>Productive?</label>
-
         <label class="switch">
             <input ng-model="vm.productivity" type="checkbox">
             <span class="slider"></span>
@@ -22,6 +26,6 @@
 
     <button type="submit">Submit</button>
     <button type="reset">Reset</button>
-    <button id="exitBtn" ng-click="vm.modalExit()">X</button>
+    <button class="exitBtn" ng-click="vm.modalExit()">X</button>
 
 </form>
