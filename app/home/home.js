@@ -3,48 +3,68 @@
 angular.module('root-app', [])
   .factory('dataTotals', function () {
     let dataTotals = {
-      plannedMins: 0,
-      recordedMins: 0,
-      unspentPastMins: 0,
-      productivity: {
-        recorded: {
-          productive: 0,
-          unproductive: 0,
-          percentage: 0
-        },
-        planned: {
-          productive: 0,
-          unproductive: 0,
-          percentage: 0
-        }
-      },
+
       historyTotals: {
         recordedTotal: 0,
         unusedPastTime: 0,
         productive: 0,
         unproductive: 0
-      }
+      },
+
+      today: {
+        unspentPastMins: 0,
+        timeLeft: 0,
+        records: {
+          totalMins: 0,
+          productivity: {
+            productive: 0,
+            unproductive: 0,
+            percentage: 0
+          },
+          list: [
+            { name: 'Record 1', cost: 24, category: 'asdasd', productivity: true },
+            { name: 'Record 2', cost: 2, category: 'asdasd', productivity: false },
+            { name: 'Record 3', cost: 244, category: 'asdasd', productivity: true },
+            { name: 'Record 4', cost: 202, category: 'asdasd', productivity: false },
+          ],
+        },
+
+        plans: {
+          totalMins: 0,
+          productivity: {
+            productive: 0,
+            unproductive: 0,
+            percentage: 0
+          },
+          list: [
+            { name: 'Plan 1', cost: 241, category: 'Wat', productivity: true },
+            { name: 'Plan 2', cost: 122, category: 'Waaat', productivity: false },
+            { name: 'Plan 3', cost: 24, category: 'Wat', productivity: true },
+            { name: 'Plan 4', cost: 23, category: 'a', productivity: false }
+          ],
+        }
+      },
     };
     let newTime = new Date();
     let passedMins = newTime.getHours() * 60 + newTime.getMinutes();
     let simGet = 0;
 
-    dataTotals.unspentPastMins = passedMins - dataTotals.recordedMins;
-    dataTotals.timeLeft = 1440 - passedMins - dataTotals.plannedMins;
+    dataTotals.today.unspentPastMins = passedMins - dataTotals.today.records.totalMins;
+    dataTotals.today.timeLeft = 1440 - passedMins - dataTotals.today.plans.totalMins;
 
-    if (dataTotals.productivity.recorded.productive !== 0) {
-      dataTotals.productivity.recorded.percentage = (dataTotals.productivity.recorded.productive / (dataTotals.productivity.recorded.productive + dataTotals.productivity.recorded.unproductive) * 100).toFixed(1);
+    if (dataTotals.today.records.productivity.productive !== 0) {
+      dataTotals.today.records.productivity.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
     }
-    if (dataTotals.productivity.planned.productive !== 0) {
-      dataTotals.productivity.planned.percentage = (dataTotals.productivity.planned.productive / (dataTotals.productivity.planned.productive + dataTotals.productivity.planned.unproductive) * 100).toFixed(1);
+    if (dataTotals.today.plans.productivity.productive !== 0) {
+      dataTotals.today.plans.productivity.percentage = (dataTotals.today.plans.productivity.productive / (dataTotals.today.plans.productivity.productive + dataTotals.today.plans.productivity.unproductive) * 100).toFixed(1);
     }
     // update the number of passed minutes 
     dataTotals.timeTracker = function () {
       let newTime = new Date();
       passedMins = newTime.getHours() * 60 + newTime.getMinutes();
-      dataTotals.unspentPastMins = passedMins - dataTotals.recordedMins;
-      dataTotals.historyTotals.unusedPastTime = simGet + dataTotals.unspentPastMins;
-      dataTotals.timeLeft = 1440 - passedMins - dataTotals.plannedMins;
+      dataTotals.today.unspentPastMins = passedMins - dataTotals.today.records.totalMins;
+      dataTotals.historyTotals.unusedPastTime = simGet + dataTotals.today.unspentPastMins;
+      dataTotals.today.timeLeft = 1440 - passedMins - dataTotals.today.plans.totalMins;
     };
 
     // POST requests - send POST reqs to update DB and then update local values to reflect changes
@@ -52,21 +72,21 @@ angular.module('root-app', [])
 
       // deletions to record list
       if (newMins < 0) {
-        productivity ? dataTotals.productivity.recorded.productive-- : dataTotals.productivity.recorded.unproductive--;
-        dataTotals.recordedMins = dataTotals.recordedMins - newMins;
-        dataTotals.unspentPastMins = dataTotals.unspentPastMins + newMins;
+        productivity ? dataTotals.records.productivity.productive-- : dataTotals.records.productivity.unproductive--;
+        dataTotals.today.records.totalMins = dataTotals.today.records.totalMins - newMins;
+        dataTotals.today.unspentPastMins = dataTotals.today.unspentPastMins + newMins;
         dataTotals.historyTotals.recordedTotal = dataTotals.historyTotals.recordedTotal - newMins;
         // recalculate percentages based off of new values
-        dataTotals.productivity.recorded.percentage = (dataTotals.productivity.recorded.productive / (dataTotals.productivity.recorded.productive + dataTotals.productivity.recorded.unproductive) * 100).toFixed(1);
+        dataTotals.today.records.productivity.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
       }
       // additions to record list
       else {
-        productivity ? dataTotals.productivity.recorded.productive++ : dataTotals.productivity.recorded.unproductive++;
-        dataTotals.recordedMins = dataTotals.recordedMins + newMins;
-        dataTotals.unspentPastMins = dataTotals.unspentPastMins - newMins;
+        productivity ? dataTotals.today.records.productivity.productive++ : dataTotals.today.records.productivity.unproductive++;
+        dataTotals.today.records.totalMins = dataTotals.today.records.totalMins + newMins;
+        dataTotals.today.unspentPastMins = dataTotals.today.unspentPastMins - newMins;
         dataTotals.historyTotals.recordedTotal = dataTotals.historyTotals.recordedTotal + newMins;
         // recalculate percentages based off of new values
-        dataTotals.productivity.recorded.percentage = (dataTotals.productivity.recorded.productive / (dataTotals.productivity.recorded.productive + dataTotals.productivity.recorded.unproductive) * 100).toFixed(1);
+        dataTotals.today.records.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
       }
     };
 
@@ -74,20 +94,20 @@ angular.module('root-app', [])
 
       // deletions to planned list
       if (newMins < 0) {
-        productivity ? dataTotals.productivity.planned.productive-- : dataTotals.productivity.planned.unproductive--;
-        dataTotals.plannedMins = dataTotals.plannedMins - newMins;
-        dataTotals.timeLeft = dataTotals.timeLeft + newMins;
+        productivity ? dataTotals.today.plans.productivity.productive-- : dataTotals.today.plans.productivity.unproductive--;
+        dataTotals.today.plans.totalMins = dataTotals.today.plans.totalMins - newMins;
+        dataTotals.today.timeLeft = dataTotals.today.timeLeft + newMins;
         // recalculate percentages based off of new values
-        dataTotals.productivity.planned.percentage = (dataTotals.productivity.planned.productive / (dataTotals.productivity.planned.productive + dataTotals.productivity.planned.unproductive) * 100).toFixed(1);
+        dataTotals.today.plans.productivity.percentage = (dataTotals.today.plans.productivity.productive / (dataTotals.today.plans.productivity.productive + dataTotals.today.plans.productivity.unproductive) * 100).toFixed(1);
 
       }
       // additions to planned list
       else {
-        productivity ? dataTotals.productivity.planned.productive++ : dataTotals.productivity.planned.unproductive++;
-        dataTotals.plannedMins = dataTotals.plannedMins + newMins;
-        dataTotals.timeLeft = dataTotals.timeLeft - newMins;
+        productivity ? dataTotals.today.plans.productivity.productive++ : dataTotals.today.plans.productivity.unproductive++;
+        dataTotals.today.plans.totalMins = dataTotals.today.plans.totalMins + newMins;
+        dataTotals.today.timeLeft = dataTotals.today.timeLeft - newMins;
         // recalculate percentages based off of new values
-        dataTotals.productivity.planned.percentage = (dataTotals.productivity.planned.productive / (dataTotals.productivity.planned.productive + dataTotals.productivity.planned.unproductive) * 100).toFixed(1);
+        dataTotals.today.plans.productivity.percentage = (dataTotals.today.plans.productivity.productive / (dataTotals.today.plans.productivity.productive + (dataTotals.today.plans.productivity.unproductive) * 100).toFixed(1));
       }
     };
     return dataTotals;
@@ -104,7 +124,6 @@ angular.module('root-app', [])
   .controller('TotalsCtrl', function ($interval, dataTotals) {
     let vm = this;
     vm.data = dataTotals;
-
     this.btnClick = function (tab) {
       vm.modalActive = true;
       if (tab === 'recordsAdd') {
@@ -119,28 +138,24 @@ angular.module('root-app', [])
         vm.name = 'Plan';
         vm.verb = 'Planned';
       }
-      else if (tab === 'recordsList') {
+      else if (tab === 'recordList') {
         vm.listActive = true;
-
-        // vm.dataset = data.records
+        vm.currentList = vm.data.today.records.list;
       }
-      else if (tab === 'plansList') {
+      else if (tab === 'plannedList') {
         vm.listActive = true;
-        // vm.dataset = data.records
+        vm.currentList = vm.data.today.plans.list;
       }
-      console.log(vm.formActive)
-
     };
     this.modalExit = function () {
       vm.formActive = false;
       vm.listActive = false;
       vm.modalActive = false;
-
-
       document.getElementById('modalForm').reset();
     };
 
-    this.formSubmit = function (type, minutes, productivity) {
+    this.formSubmit = function (type, name, minutes, category, productivity) {
+      console.log(name, minutes, category, productivity);
       if (type === 'Recorded') {
         dataTotals.updateRecorded(minutes, productivity);
       }

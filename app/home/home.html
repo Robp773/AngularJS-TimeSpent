@@ -17,7 +17,6 @@
         <div id="bannerDate">{{vm.date | date:"fullDate"}}</div>
         <div id="bannerClock">{{vm.date | date:"mediumTime"}}</div>
 
-
     </div>
 
     <div class="totals" ng-controller="TotalsCtrl as vm" ng-init="vm.productivity = false">
@@ -26,8 +25,11 @@
             <modal-form />
         </div>
 
+
         <div class="modalBG" ng-show="vm.listActive">
-            <modal-list />
+            <div>
+                <modal-list/>
+            </div>
         </div>
 
         <div id="totalsHeader">
@@ -36,15 +38,15 @@
                 <button ng-click="vm.btnClick('recordsAdd')">
                     <i class="far fa-plus-square"></i>
                 </button>
-                <button ng-click="vm.btnClick('recordsList')">
+                <button ng-click="vm.btnClick('recordList')">
                     <i class="fas fa-clipboard-list"></i>
                 </button>
             </div>
 
             <div class="productivity">
                 <h4>Today</h4>
-                <div ng-show="vm.data.productivity.recorded.productive === 0">Productivity - 0%</div>
-                <div ng-show="vm.data.productivity.recorded.productive > 0">Productivity - {{vm.data.productivity.recorded.percentage}}%</div>
+                <div ng-show="vm.data.today.records.productivity.productive === 0">Productivity - 0%</div>
+                <div ng-show="vm.data.today.records.productivity.productive > 0">Productivity - {{vm.data.today.records.productivity.percentage}}%</div>
             </div>
 
             <div class="plans">
@@ -52,7 +54,7 @@
                 <button ng-click="vm.btnClick('plansAdd')">
                     <i class="far fa-plus-square"></i>
                 </button>
-                <button ng-click="vm.btnClick('plansList')">
+                <button ng-click="vm.btnClick('plannedList')">
                     <i class="fas fa-clipboard-list"></i>
                 </button>
             </div>
@@ -73,22 +75,22 @@
 
             <div class="totalSection subtraction">
                 <div class="totalLabel">Recorded Minutes</div>
-                <div class="totalValue">-{{vm.data.recordedMins}}</div>
+                <div class="totalValue">-{{vm.data.today.records.totalMins}}</div>
             </div>
 
             <div class="totalSection subtraction">
                 <div class="totalLabel">Unspent Passed Time</div>
-                <div class="totalValue">-{{vm.data.unspentPastMins}}</div>
+                <div class="totalValue">-{{vm.data.today.unspentPastMins}}</div>
             </div>
 
             <div class="totalSection subtraction">
                 <div class="totalLabel">Planned Minutes</div>
-                <div class="totalValue">-{{vm.data.plannedMins}}</div>
+                <div class="totalValue">-{{vm.data.today.plans.totalMins}}</div>
             </div>
 
             <div class="totalSection subTotal">
                 <div class="totalLabel">Minutes Left</div>
-                <div class="totalValue">{{vm.data.timeLeft}}</div>
+                <div class="totalValue">{{vm.data.today.timeLeft}}</div>
             </div>
 
         </div>
