@@ -66,7 +66,7 @@ img {
     transform: translateY(-20%);
 }
 
-#exitBtn{
+.exitBtn{
 	position: absolute;
     top: 5px;
     right: 5px;
@@ -167,11 +167,28 @@ input{
     background: gainsboro;
     margin: 5px;
 }
-
-
 .records{
 	right: 20px;
 }
 .plans{
 	left: 20px;
+}
+.listItemContainer{
+	margin: 10px;
+	background: white;
+	position: absolute;
+    top: 20%;
+    left: 7%;
+    right: 7%;
+    -webkit-transform: translateY(-20%);
+    -ms-transform: translateY(-20%);
+    transform: translateY(-20%);
+}
+.listItemLabel, .listItemValue{
+	display: inline-block;
+	margin: auto;
+}
+
+.listItemSection{
+	margin: 10px auto;
 }
