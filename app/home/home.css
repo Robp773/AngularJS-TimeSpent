@@ -190,5 +190,26 @@ input{
 }
 
 .listItemSection{
+	border: 1px solid black;
+    width: 70%;
 	margin: 10px auto;
+	display: flex;
+}
+.listItemSection:hover{
+	background: yellow;
+	cursor: pointer;
+}
+.listItemBtn{
+    float: left;
+    margin: 3px;
+    width: 50%;
+}
+.btnParent{
+	display: inline-block;
+	width: 25%;
+	margin: auto;
+}
+.listParent{
+	display: inline-block;
+	width: 70%;
 }

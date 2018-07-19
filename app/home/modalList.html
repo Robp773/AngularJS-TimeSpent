@@ -1,28 +1,39 @@
 <div class="listItemContainer">
     <div class="listItemSection" ng-repeat="item in vm.currentList">
+   
+        <div class="listParent">
+            <div class="listItemParent">
+                <div class="listItemLabel">Name: </div>
+                <div class="listItemValue">{{item.name}}</div>
+            </div>
 
-        <div class="listItemParent">
-            <div class="listItemLabel">Name: </div>
-            <div class="listItemValue">{{item.name}}</div>
+            <div class="listItemParent">
+                <div class="listItemLabel">Cost: </div>
+                <div class="listItemValue">{{item.cost}}</div>
+            </div>
+
+
+            <div class="listItemParent">
+                <div class="listItemLabel">Category:</div>
+                <div class="listItemValue">{{item.category}}</div>
+            </div>
+
+            <div class="listItemParent">
+                <div class="listItemLabel">Productivity:</div>
+                <div class="listItemValue">{{item.productivity}}</div>
+            </div>
         </div>
-
-        <div class="listItemParent">
-            <div class="listItemLabel">Cost: </div>
-            <div class="listItemValue">{{item.cost}}</div>
-        </div>
-
-
-        <div class="listItemParent">
-            <div class="listItemLabel">Category:</div>
-            <div class="listItemValue">{{item.category}}</div>
-        </div>
-
-        <div class="listItemParent">
-            <div class="listItemLabel">Productivity:</div>
-            <div class="listItemValue">{{item.productivity}}</div>
-        </div>
-
+        <div class="btnParent">
+                <button class="listItemBtn" ng-click="vm.editItem(item.name, item.cost, item.category, item.productivity)">
+                    <i class="fas fa-edit"></i>
+                </button>
+    
+                <button class="listItemBtn">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
     </div>
+    
     <button class="exitBtn" ng-click="vm.modalExit()">X</button>
 
 </div>
