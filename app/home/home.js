@@ -22,10 +22,10 @@ angular.module('root-app', [])
             percentage: 0
           },
           list: [
-            { name: 'Record 1', cost: 24, category: 'asdasd', productivity: true },
-            { name: 'Record 2', cost: 2, category: 'asdasd', productivity: false },
-            { name: 'Record 3', cost: 244, category: 'asdasd', productivity: true },
-            { name: 'Record 4', cost: 202, category: 'asdasd', productivity: false },
+            { name: 'Record 1', cost: 24, category: 'Routine', productivity: true },
+            { name: 'Record 2', cost: 2, category: 'Problem', productivity: false },
+            { name: 'Record 3', cost: 244, category: 'Project', productivity: true },
+            { name: 'Record 4', cost: 202, category: 'Project', productivity: false },
           ],
         },
 
@@ -37,10 +37,10 @@ angular.module('root-app', [])
             percentage: 0
           },
           list: [
-            { name: 'Plan 1', cost: 241, category: 'Wat', productivity: true },
-            { name: 'Plan 2', cost: 122, category: 'Waaat', productivity: false },
-            { name: 'Plan 3', cost: 24, category: 'Wat', productivity: true },
-            { name: 'Plan 4', cost: 23, category: 'a', productivity: false }
+            { name: 'Plan 1', cost: 241, category: 'One Time', productivity: true },
+            { name: 'Plan 2', cost: 122, category: 'Problem', productivity: false },
+            { name: 'Plan 3', cost: 24, category: 'Project', productivity: true },
+            { name: 'Plan 4', cost: 23, category: 'Other', productivity: false }
           ],
         }
       },
@@ -73,10 +73,9 @@ angular.module('root-app', [])
       // deletions to record list
       if (!add) {
 
-        //  let index =  dataTotals.today.records.list.findIndex(function(){
-        //     return {name: name, cost: newMins, category: category, productivity: productivity};
-        //   });
-        //   console.log(index)
+        let index = dataTotals.today.records.list.findIndex(function () {
+          return { name: name, cost: newMins, category: category, productivity: productivity };
+        });
 
         productivity ? dataTotals.records.productivity.productive-- : dataTotals.records.productivity.unproductive--;
         dataTotals.today.records.totalMins = dataTotals.today.records.totalMins - newMins;
@@ -87,7 +86,7 @@ angular.module('root-app', [])
       }
       // additions to record list
       else {
-        dataTotals.today.records.list.push({name: name, cost: newMins, category: category, productivity: productivity});
+        dataTotals.today.records.list.push({ name: name, cost: newMins, category: category, productivity: productivity });
         productivity ? dataTotals.today.records.productivity.productive++ : dataTotals.today.records.productivity.unproductive++;
         dataTotals.today.records.totalMins = dataTotals.today.records.totalMins + newMins;
         dataTotals.today.unspentPastMins = dataTotals.today.unspentPastMins - newMins;
@@ -110,7 +109,7 @@ angular.module('root-app', [])
       }
       // additions to planned list
       else {
-        dataTotals.today.plans.list.push({name: name, cost: newMins, category: category, productivity: productivity});
+        dataTotals.today.plans.list.push({ name: name, cost: newMins, category: category, productivity: productivity });
         productivity ? dataTotals.today.plans.productivity.productive++ : dataTotals.today.plans.productivity.unproductive++;
         dataTotals.today.plans.totalMins = dataTotals.today.plans.totalMins + newMins;
         dataTotals.today.timeLeft = dataTotals.today.timeLeft - newMins;
@@ -132,11 +131,14 @@ angular.module('root-app', [])
   .controller('TotalsCtrl', function ($interval, dataTotals) {
     let vm = this;
     vm.data = dataTotals;
+
     this.btnClick = function (tab) {
       vm.modalActive = true;
       if (tab === 'recordsAdd') {
+
         vm.formActive = true;
         vm.title = 'Records';
+        
         vm.name = 'Record';
         vm.verb = 'Recorded';
       }
@@ -149,16 +151,23 @@ angular.module('root-app', [])
       else if (tab === 'recordList') {
         vm.listActive = true;
         vm.currentList = vm.data.today.records.list;
+        vm.listTitle = 'records';
       }
       else if (tab === 'plannedList') {
         vm.listActive = true;
         vm.currentList = vm.data.today.plans.list;
+        vm.listTitle = 'plans';
       }
     };
     this.modalExit = function () {
       vm.formActive = false;
       vm.listActive = false;
       vm.modalActive = false;
+      // temporary fix for values not populating form when user tries to edit same element twice
+      vm.nameVal = '';
+      vm.minutes = null;
+      vm.category = 'Select';
+      vm.productivity  = false;
       document.getElementById('modalForm').reset();
     };
 
@@ -167,11 +176,24 @@ angular.module('root-app', [])
         dataTotals.updateRecorded(true, name, minutes, category, productivity);
       }
       else {
-        console.log('plans')
         dataTotals.updatePlanned(true, name, minutes, category, productivity);
       }
       document.getElementById('modalForm').reset();
       vm.productivity = false;
+    };
+
+    this.editItem = function (name, cost, category, productivity) {
+      let editIndex = vm.data.today.records.list.findIndex(function (element) {
+        let compareObj = { name: element.name, cost: element.cost, category: element.category, productivity: element.productivity };
+        return JSON.stringify(compareObj) === JSON.stringify({ name: name, cost: cost, category: category, productivity: productivity });
+      });
+      vm.nameVal = name;
+      vm.minutes = cost;
+      vm.category = category;
+      vm.productivity = productivity;
+      vm.formActive = true;
+      vm.listActive = false;
+      console.log(vm.name);
     };
 
     $interval(function () {
