@@ -1,25 +1,25 @@
-<form name="modalForm"  id="modalForm" ng-submit="vm.formSubmit(vm.verb, vm.name, vm.minutes, vm.category, vm.productivity)">
+<form name="modalForm"  id="modalForm" ng-submit="vm.formSubmit(vm.verb, vm.nameVal, vm.minutes, vm.category, vm.productivity)">
 
     <legend>{{vm.title}}</legend>
 
-    <input class="modalInput" type="text" ng-model="vm.name" placeholder="Name of {{vm.name}}" required/>
+    <input class="modalInput" type="text" ng-model="vm.nameVal" required/>
 
-    <input class="modalInput" type="number" ng-model="vm.minutes" placeholder="{{vm.verb}} minutes" required />
+    <input class="modalInput" type="number" ng-model="vm.minutes" required />
 
     <label id="categoryLabel">Category:</label>
     <select ng-model="vm.category">
         <option value="" selected>Select</option>
-        <option>One Time</option>
-        <option>Routine</option>
-        <option>Project</option>
-        <option>Problem</option>
-        <option>Other</option>
+        <option ng-selected="vm.category === 'One Time'">One Time</option>
+        <option ng-selected="vm.category === 'Routine'">Routine</option>
+        <option ng-selected="vm.category === 'Project'">Project</option>
+        <option ng-selected="vm.category === 'Problem'">Problem</option>
+        <option ng-selected="vm.category === 'Other'">Other</option>
     </select>
 
     <div>
         <label>Productive?</label>
         <label class="switch">
-            <input ng-model="vm.productivity" type="checkbox">
+            <input ng-model="vm.productivity" type="checkbox" ng-checked="vm.productivity">
             <span class="slider"></span>
         </label>
     </div>
