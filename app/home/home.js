@@ -45,19 +45,25 @@ angular.module('root-app', [])
         }
       },
     };
+
     let newTime = new Date();
     let passedMins = newTime.getHours() * 60 + newTime.getMinutes();
     let simGet = 0;
 
-    dataTotals.today.unspentPastMins = passedMins - dataTotals.today.records.totalMins;
-    dataTotals.today.timeLeft = 1440 - passedMins - dataTotals.today.plans.totalMins;
+    // dataTotals.today.unspentPastMins = passedMins - dataTotals.today.records.totalMins;
+    // dataTotals.today.timeLeft = 1440 - passedMins - dataTotals.today.plans.totalMins;
 
-    if (dataTotals.today.records.productivity.productive !== 0) {
-      dataTotals.today.records.productivity.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
-    }
-    if (dataTotals.today.plans.productivity.productive !== 0) {
-      dataTotals.today.plans.productivity.percentage = (dataTotals.today.plans.productivity.productive / (dataTotals.today.plans.productivity.productive + dataTotals.today.plans.productivity.unproductive) * 100).toFixed(1);
-    }
+    // if (dataTotals.today.records.productivity.productive !== 0) {
+    //   dataTotals.today.records.productivity.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
+    // }
+    // if (dataTotals.today.plans.productivity.productive !== 0) {
+    //   dataTotals.today.plans.productivity.percentage = (dataTotals.today.plans.productivity.productive / (dataTotals.today.plans.productivity.productive + dataTotals.today.plans.productivity.unproductive) * 100).toFixed(1);
+    // }
+
+
+
+
+
     // update the number of passed minutes 
     dataTotals.timeTracker = function () {
       let newTime = new Date();
@@ -67,55 +73,46 @@ angular.module('root-app', [])
       dataTotals.today.timeLeft = 1440 - passedMins - dataTotals.today.plans.totalMins;
     };
 
-    // POST requests - send POST reqs to update DB and then update local values to reflect changes
-    dataTotals.updateRecorded = function (add, name, newMins, category, productivity) {
+    dataTotals.recalculate = function (list) {
+      let listType = list;
 
-      // deletions to record list
-      if (!add) {
+      dataTotals.today[listType].totalMins = 0;
+      dataTotals.today[listType].productivity.productive = 0;
+      dataTotals.today[listType].productivity.unproductive = 0;
 
-        let index = dataTotals.today.records.list.findIndex(function () {
-          return { name: name, cost: newMins, category: category, productivity: productivity };
-        });
-
-        productivity ? dataTotals.records.productivity.productive-- : dataTotals.records.productivity.unproductive--;
-        dataTotals.today.records.totalMins = dataTotals.today.records.totalMins - newMins;
-        dataTotals.today.unspentPastMins = dataTotals.today.unspentPastMins + newMins;
-        dataTotals.historyTotals.recordedTotal = dataTotals.historyTotals.recordedTotal - newMins;
-        // recalculate percentages based off of new values
-        dataTotals.today.records.productivity.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
-      }
-      // additions to record list
-      else {
-        dataTotals.today.records.list.push({ name: name, cost: newMins, category: category, productivity: productivity });
-        productivity ? dataTotals.today.records.productivity.productive++ : dataTotals.today.records.productivity.unproductive++;
-        dataTotals.today.records.totalMins = dataTotals.today.records.totalMins + newMins;
-        dataTotals.today.unspentPastMins = dataTotals.today.unspentPastMins - newMins;
-        dataTotals.historyTotals.recordedTotal = dataTotals.historyTotals.recordedTotal + newMins;
-        // recalculate percentages based off of new values
-        dataTotals.today.records.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
-      }
+      dataTotals.today[listType].list.map(function (item) {
+        // cost
+        dataTotals.today[listType].totalMins = dataTotals.today[listType].totalMins + item.cost;
+        // productivity
+        if (item.productivity) {
+          dataTotals.today[listType].productivity.productive++;
+        }
+        else {
+          dataTotals.today[listType].productivity.unproductive++;
+        }
+      });
+      dataTotals.today.unspentPastMins = passedMins - dataTotals.today.records.totalMins;
+      dataTotals.today[listType].productivity.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
     };
 
-    dataTotals.updatePlanned = function (add, name, newMins, category, productivity) {
+    dataTotals.addRecorded = function (name, newMins, category, productivity) {
+      dataTotals.today.records.list.push({ name: name, cost: newMins, category: category, productivity: productivity });
+      dataTotals.recalculate('records');
+    };
 
-      // deletions to planned list
-      if (!add) {
-        productivity ? dataTotals.today.plans.productivity.productive-- : dataTotals.today.plans.productivity.unproductive--;
-        dataTotals.today.plans.totalMins = dataTotals.today.plans.totalMins - newMins;
-        dataTotals.today.timeLeft = dataTotals.today.timeLeft + newMins;
-        // recalculate percentages based off of new values
-        dataTotals.today.plans.productivity.percentage = (dataTotals.today.plans.productivity.productive / (dataTotals.today.plans.productivity.productive + dataTotals.today.plans.productivity.unproductive) * 100).toFixed(1);
+    dataTotals.addPlanned = function (name, newMins, category, productivity) {
+      dataTotals.today.plans.list.push({ name: name, cost: newMins, category: category, productivity: productivity });
+      dataTotals.recalculate('plans');
+    };
 
-      }
-      // additions to planned list
-      else {
-        dataTotals.today.plans.list.push({ name: name, cost: newMins, category: category, productivity: productivity });
-        productivity ? dataTotals.today.plans.productivity.productive++ : dataTotals.today.plans.productivity.unproductive++;
-        dataTotals.today.plans.totalMins = dataTotals.today.plans.totalMins + newMins;
-        dataTotals.today.timeLeft = dataTotals.today.timeLeft - newMins;
-        // recalculate percentages based off of new values
-        dataTotals.today.plans.productivity.percentage = (dataTotals.today.plans.productivity.productive / (dataTotals.today.plans.productivity.productive + (dataTotals.today.plans.productivity.unproductive) * 100).toFixed(1));
-      }
+    dataTotals.editRecords = function (index, newData) {
+      dataTotals.today.records.list.splice(index, 1, newData);
+      dataTotals.recalculate('records');
+    };
+
+    dataTotals.editPlans = function (index, newData) {
+      dataTotals.today.plans.list.splice(index, 1, newData);
+      dataTotals.recalculate('plans');
     };
     return dataTotals;
   })
@@ -132,32 +129,47 @@ angular.module('root-app', [])
     let vm = this;
     vm.data = dataTotals;
 
+    vm.init = function () {
+      dataTotals.recalculate('records');
+      dataTotals.recalculate('plans');
+    };
+
+    vm.init();
+
+
     this.btnClick = function (tab) {
       vm.modalActive = true;
       if (tab === 'recordsAdd') {
-
         vm.formActive = true;
         vm.title = 'Records';
-        
         vm.name = 'Record';
         vm.verb = 'Recorded';
       }
+
       else if (tab === 'plansAdd') {
         vm.formActive = true;
         vm.title = 'Plans';
         vm.name = 'Plan';
         vm.verb = 'Planned';
       }
+
       else if (tab === 'recordList') {
+        vm.listType = 'records';
+        vm.title = 'Records';
+        vm.name = 'Record';
+        vm.verb = 'Recorded';
         vm.listActive = true;
         vm.currentList = vm.data.today.records.list;
-        vm.listTitle = 'records';
       }
       else if (tab === 'plannedList') {
+        vm.listType = 'plans';
+        vm.title = 'Plans';
+        vm.name = 'Plan';
+        vm.verb = 'Planned';
         vm.listActive = true;
         vm.currentList = vm.data.today.plans.list;
-        vm.listTitle = 'plans';
       }
+
     };
     this.modalExit = function () {
       vm.formActive = false;
@@ -167,33 +179,49 @@ angular.module('root-app', [])
       vm.nameVal = '';
       vm.minutes = null;
       vm.category = 'Select';
-      vm.productivity  = false;
+      vm.productivity = false;
       document.getElementById('modalForm').reset();
     };
 
     this.formSubmit = function (type, name, minutes, category, productivity) {
       if (type === 'Recorded') {
-        dataTotals.updateRecorded(true, name, minutes, category, productivity);
+        dataTotals.addRecorded(name, minutes, category, productivity);
       }
       else {
-        dataTotals.updatePlanned(true, name, minutes, category, productivity);
+        dataTotals.addPlanned(name, minutes, category, productivity);
       }
       document.getElementById('modalForm').reset();
       vm.productivity = false;
     };
 
     this.editItem = function (name, cost, category, productivity) {
-      let editIndex = vm.data.today.records.list.findIndex(function (element) {
-        let compareObj = { name: element.name, cost: element.cost, category: element.category, productivity: element.productivity };
-        return JSON.stringify(compareObj) === JSON.stringify({ name: name, cost: cost, category: category, productivity: productivity });
-      });
+
+      vm.editing = true;
+      // preset form values to the selected list item
       vm.nameVal = name;
       vm.minutes = cost;
       vm.category = category;
       vm.productivity = productivity;
       vm.formActive = true;
       vm.listActive = false;
-      console.log(vm.name);
+
+      // get the index number of the list item being accessed
+      vm.editIndex = vm.data.today[vm.listType].list.findIndex(function (element) {
+        let compareObj = { name: element.name, cost: element.cost, category: element.category, productivity: element.productivity };
+        return JSON.stringify(compareObj) === JSON.stringify({ name: name, cost: cost, category: category, productivity: productivity });
+      });
+    };
+
+    this.submitEdit = function (verb) {
+      if (verb === 'Recorded') {
+        dataTotals.editRecords(vm.editIndex, { name: vm.nameVal, cost: vm.minutes, category: vm.category, productivity: vm.productivity });
+      }
+      else {
+        dataTotals.editPlans(vm.editIndex, { name: vm.nameVal, cost: vm.minutes, category: vm.category, productivity: vm.productivity });
+      }
+      vm.editing = false;
+      vm.formActive = false;
+      vm.listActive = true;
     };
 
     $interval(function () {

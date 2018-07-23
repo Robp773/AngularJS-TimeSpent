@@ -1,4 +1,4 @@
-<form name="modalForm"  id="modalForm" ng-submit="vm.formSubmit(vm.verb, vm.nameVal, vm.minutes, vm.category, vm.productivity)">
+<form name="modalForm"  id="modalForm">
 
     <legend>{{vm.title}}</legend>
 
@@ -24,7 +24,8 @@
         </label>
     </div>
 
-    <button type="submit">Submit</button>
+    <button ng-show="!vm.editing" ng-click="vm.formSubmit(vm.verb, vm.nameVal, vm.minutes, vm.category, vm.productivity)" type="submit">Submit</button>
+    <button ng-show="vm.editing" ng-click="vm.submitEdit(vm.verb)" ng-selected="vm.editing">Update</button>
     <button type="reset">Reset</button>
     <button class="exitBtn" ng-click="vm.modalExit()">X</button>
 
