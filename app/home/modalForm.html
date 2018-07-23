@@ -24,8 +24,8 @@
         </label>
     </div>
 
-    <button ng-show="!vm.editing" ng-click="vm.formSubmit(vm.verb, vm.nameVal, vm.minutes, vm.category, vm.productivity)" type="submit">Submit</button>
-    <button ng-show="vm.editing" ng-click="vm.submitEdit(vm.verb)" ng-selected="vm.editing">Update</button>
+    <button ng-show="!vm.editing" ng-click="vm.formSubmit(vm.nameVal, vm.minutes, vm.category, vm.productivity)" type="submit">Submit</button>
+    <button ng-show="vm.editing" ng-click="vm.submitEdit()" ng-selected="vm.editing">Update</button>
     <button type="reset">Reset</button>
     <button class="exitBtn" ng-click="vm.modalExit()">X</button>
 

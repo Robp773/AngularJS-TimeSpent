@@ -50,20 +50,6 @@ angular.module('root-app', [])
     let passedMins = newTime.getHours() * 60 + newTime.getMinutes();
     let simGet = 0;
 
-    // dataTotals.today.unspentPastMins = passedMins - dataTotals.today.records.totalMins;
-    // dataTotals.today.timeLeft = 1440 - passedMins - dataTotals.today.plans.totalMins;
-
-    // if (dataTotals.today.records.productivity.productive !== 0) {
-    //   dataTotals.today.records.productivity.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
-    // }
-    // if (dataTotals.today.plans.productivity.productive !== 0) {
-    //   dataTotals.today.plans.productivity.percentage = (dataTotals.today.plans.productivity.productive / (dataTotals.today.plans.productivity.productive + dataTotals.today.plans.productivity.unproductive) * 100).toFixed(1);
-    // }
-
-
-
-
-
     // update the number of passed minutes 
     dataTotals.timeTracker = function () {
       let newTime = new Date();
@@ -95,25 +81,22 @@ angular.module('root-app', [])
       dataTotals.today[listType].productivity.percentage = (dataTotals.today.records.productivity.productive / (dataTotals.today.records.productivity.productive + dataTotals.today.records.productivity.unproductive) * 100).toFixed(1);
     };
 
-    dataTotals.addRecorded = function (name, newMins, category, productivity) {
-      dataTotals.today.records.list.push({ name: name, cost: newMins, category: category, productivity: productivity });
-      dataTotals.recalculate('records');
+    dataTotals.addItem = function (listType, name, newMins, category, productivity) {
+      dataTotals.today[listType].list.push({ name: name, cost: newMins, category: category, productivity: productivity });
+      dataTotals.recalculate(listType);
     };
 
-    dataTotals.addPlanned = function (name, newMins, category, productivity) {
-      dataTotals.today.plans.list.push({ name: name, cost: newMins, category: category, productivity: productivity });
-      dataTotals.recalculate('plans');
+    dataTotals.editItem = function (listType, index, newData) {
+      dataTotals.today[listType].list.splice(index, 1, newData);
+      dataTotals.recalculate(listType);
     };
 
-    dataTotals.editRecords = function (index, newData) {
-      dataTotals.today.records.list.splice(index, 1, newData);
-      dataTotals.recalculate('records');
+
+    dataTotals.deleteItem = function (listType, index) {
+      dataTotals.today[listType].list.splice(index, 1);
+      dataTotals.recalculate(listType);
     };
 
-    dataTotals.editPlans = function (index, newData) {
-      dataTotals.today.plans.list.splice(index, 1, newData);
-      dataTotals.recalculate('plans');
-    };
     return dataTotals;
   })
 
@@ -136,11 +119,11 @@ angular.module('root-app', [])
 
     vm.init();
 
-
     this.btnClick = function (tab) {
       vm.modalActive = true;
       if (tab === 'recordsAdd') {
         vm.formActive = true;
+        vm.listType = 'records';
         vm.title = 'Records';
         vm.name = 'Record';
         vm.verb = 'Recorded';
@@ -150,6 +133,7 @@ angular.module('root-app', [])
         vm.formActive = true;
         vm.title = 'Plans';
         vm.name = 'Plan';
+        vm.listType = 'plans';
         vm.verb = 'Planned';
       }
 
@@ -183,13 +167,9 @@ angular.module('root-app', [])
       document.getElementById('modalForm').reset();
     };
 
-    this.formSubmit = function (type, name, minutes, category, productivity) {
-      if (type === 'Recorded') {
-        dataTotals.addRecorded(name, minutes, category, productivity);
-      }
-      else {
-        dataTotals.addPlanned(name, minutes, category, productivity);
-      }
+    this.formSubmit = function (name, minutes, category, productivity) {
+      dataTotals.addItem(vm.listType, name, minutes, category, productivity);
+
       document.getElementById('modalForm').reset();
       vm.productivity = false;
     };
@@ -212,16 +192,23 @@ angular.module('root-app', [])
       });
     };
 
-    this.submitEdit = function (verb) {
-      if (verb === 'Recorded') {
-        dataTotals.editRecords(vm.editIndex, { name: vm.nameVal, cost: vm.minutes, category: vm.category, productivity: vm.productivity });
-      }
-      else {
-        dataTotals.editPlans(vm.editIndex, { name: vm.nameVal, cost: vm.minutes, category: vm.category, productivity: vm.productivity });
-      }
+    this.submitEdit = function () {
+
+      dataTotals.editItem(vm.listType, vm.editIndex, { name: vm.nameVal, cost: vm.minutes, category: vm.category, productivity: vm.productivity });
+
       vm.editing = false;
       vm.formActive = false;
       vm.listActive = true;
+    };
+
+    this.deleteItem = function (listItem) {
+
+      vm.deleteIndex = vm.data.today[vm.listType].list.findIndex(function (element) {
+        let compareObj = { name: element.name, cost: element.cost, category: element.category, productivity: element.productivity };
+        return JSON.stringify(compareObj) === JSON.stringify(listItem);
+      });
+
+      dataTotals.deleteItem(vm.listType, vm.deleteIndex);
     };
 
     $interval(function () {
